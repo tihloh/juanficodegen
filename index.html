@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotspot User Configuration</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Hotspot User Configuration</h2>
+        <form id="configForm">
+            <div style="background-color: #ffffb6;">
+				<div class="form-group">
+					<label for="nameOption">Name Option:</label>
+					<select id="nameOption" class="form-control" onchange="toggleNameInput()">
+						<option value="custom">Custom</option>
+						<option value="random">Random</option>
+					</select>
+				</div>
+
+				<div class="row">
+					<div id="nameInput" class="form-group col-md-4">
+						<label for="name">Name:</label>
+						<input type="text" id="name" class="form-control" value="user" required>
+					</div>
+				</div>
+
+				<div id="randomNameInputs" style="display:none;">
+					<div class="row">
+						<div class="form-group col-md-3">
+							<label for="quantity">Quantity:</label>
+							<input type="number" id="quantity" class="form-control" value="1" min="1">
+						</div>
+					
+						<div class="form-group col-md-3">
+							<label for="prefix">Name Prefix:</label>
+							<input type="text" id="prefix" class="form-control" value="U">
+						</div>
+
+						<div class="form-group col-md-3">
+							<label for="nameLength">Name Length:</label>
+							<input type="number" id="nameLength" class="form-control" value="6" min="1">
+						</div>
+
+						<div class="form-group col-md-3">
+							<label for="randomNameOption">Name Options:</label>
+							<select id="randomNameOption" class="form-control">
+								<option value="randomChars">Random Characters</option>
+								<option value="randomNumbers">Random Numbers</option>
+								<option value="allCaps">All Caps</option>
+								<option value="allSmall">All Small</option>
+								<option value="mixed">Mixed</option>
+							</select>
+						</div>
+					</div>
+				</div>
+            </div>
+			
+            <div class="form-row">
+				<div class="form-group col-md-6">
+					<label for="server">Server (optional):</label>
+					<input type="text" id="server" class="form-control" value="all">
+				</div>
+				
+				<div class="form-group col-md-6">
+					<label for="profile">Profile (optional):</label>
+					<input type="text" id="profile" class="form-control" value="default">
+				</div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Limit Uptime:</label>
+                    <div class="form-row">
+                        <div class="col-md-4">
+                            <label for="daysLimit">Days:</label>
+                            <input type="number" id="daysLimit" class="form-control" value="0" min="0">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="hoursLimit">Hours:</label>
+                            <input type="number" id="hoursLimit" class="form-control" value="1" min="0" max="23">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="minutesLimit">Minutes:</label>
+                            <input type="number" id="minutesLimit" class="form-control" value="0" min="0" max="59">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label>Validity (optional):</label>
+                    <div class="form-row">
+                        <div class="col-md-4">
+                            <label for="daysValidity">Days:</label>
+                            <input type="number" id="daysValidity" class="form-control" value="0" min="0">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="hoursValidity">Hours:</label>
+                            <input type="number" id="hoursValidity" class="form-control" value="2" min="0" max="23">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="minutesValidity">Minutes:</label>
+                            <input type="number" id="minutesValidity" class="form-control" value="0" min="0" max="59">
+                        </div>
+                    </div>
+                </div>
+            </div>
+			
+            <div class="form-row">
+				<div class="form-group col-md-4">
+					<label for="vendoName">Vendor Name:</label>
+					<input type="text" id="vendoName" class="form-control" value="Amy Vendo">
+				</div>
+				
+				<div class="form-group col-md-4">
+					<label for="price">Price:</label>
+					<input type="number" id="price" class="form-control" value="0" min="0">
+				</div>
+
+				<div class="form-group col-md-4">
+					<label for="limitBytesTotal">Voucher Data Package (optional) M=MB G=GB:</label>
+					<input type="text" id="limitBytesTotal" class="form-control" value="0">
+				</div>
+            </div>
+            
+            <button type="submit" class="btn btn-success">(1) Generate Configuration</button>
+			<button onclick="downloadConfig()" class="btn btn-primary">(2) Download rsc file</button>
+       </form><br>
+			<a class="btn btn-default copyButton" data-sid="generatedConfig">Copy Config</a>
+			<a class="btn btn-default copyButton" data-sid="usernames">Copy Names</a>
+ 			<button onclick="print()" class="btn btn-primary">Print</button>
+ 			<button onclick="printFromClipboard()" class="btn btn-primary">Print from Clipboard</button>
+
+        <h2 class="mt-5">Generated Configuration</h2>
+        <pre id="generatedConfig"></pre>
+        <pre id="usernames"></pre>
+		<textarea id="vouchers"></textarea>
+    </div>
+
+<div id="vouchertemplate" hiddens>
+	<div style="font-family: Arial, sans-serif; display: flex; border: 2px solid #000; width: 180px; height: 90px; background-color: #fff; margin-bottom: 5px; margin-right: 5px; ">
+		<div style="display: flex; flex-direction: column; align-items: center; width: 105px;border-right: 2px solid #000;">
+			<div style="font-size: 8pt;border-bottom: 2px solid #000;width: 105px;"><center>${TITLE}</center></div>
+			<div style="font-size: 14pt; font-weight: bold; padding-top: 3px; ">${PRICE} <span style="font-size: 10pt;font-weight: bold;">/ ${TIME}</span></div>
+			<div style="margin-top: 2px;margin-bottom: 3px;">
+				<span style="font-size: 8pt; ">CODE:</span> <span style="font-size: 12pt;font-weight: bold;">${CODE}</span>
+			</div>
+			<div style="font-size: 6pt; margin-top: 1px; padding-top: 1px; justify-content: center; align-items: center; color: red; text-align: center;border-top: 2px solid #000;width: 105px;">
+				ONE TIME USE ONLY<br>NON-REFUNDABLE
+			</div>
+		</div>
+		<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 75px; ">
+			<image src="${IMAGE}" width="73px"/><center style="font-size: 8pt;align-items: top; ">Scan me</center>
+		</div>
+	</div>
+</div>
+<form id="printForm" method=post action="?p=report&r=voucher">
+	<input type="hidden" name="p" value="report" />
+	<input type="hidden" name="r" value="voucher" />
+	<input type="hidden" id="fcodes" name="codes" value="" />
+	<input type="hidden" id="famount" name="amount" value="" />
+	<input type="hidden" id="ftime" name="time" value="" />
+</form>
+
+    <script>
+		window.onload = function() {
+            var dropdown = document.getElementById('nameOption');
+            dropdown.selectedIndex = 0;
+        };
+		
+		function print() {
+            const newWindow = window.open('', '_blank', 'width=800');
+			var html='<style>@media print {div {break-inside: avoid;}}</style><div style="display: flex; flex-wrap: wrap;">';
+			var price = $("#price").val();
+			var daysLimit = parseInt(document.getElementById('daysLimit').value);
+			var hoursLimit = parseInt(document.getElementById('hoursLimit').value);
+			var minutesLimit = parseInt(document.getElementById('minutesLimit').value);
+			var time = (daysLimit>0?daysLimit+' day':'')+(hoursLimit>0?hoursLimit+' hour':'')+(minutesLimit>0?minutesLimit+' mins':'');
+			var vouchers = localStorage.getItem("vouchers");
+			var arrvouchers = vouchers.split("\n");
+			for (var i = 0; i < arrvouchers.length; i++) {
+				var code = arrvouchers[i].trim();
+				if(code!=""){
+					var template=$("#vouchertemplate").html();
+					template = template.replace("${TITLE}", "PixiePoint Pisowifi");
+					template = template.replace("${PRICE}", (price==0?"FREE":"P"+price));
+					template = template.replace("${TIME}", time);
+					template = template.replace("${CODE}", code);
+					template = template.replace("${IMAGE}", "?ext=qrcode&data="+code);
+					html = html+template;
+				}
+			}
+			newWindow.document.write(html+'</div>');
+            newWindow.document.close();
+        }
+		
+		function print2(){
+			event.preventDefault();
+			var formData = $(this).serializeArray();
+			$("#fcodes").val($("#usernames").html());
+			$('#printForm').submit();
+		}
+			
+		function printFromClipboard(){
+			var vouchers = $("#vouchers").val();
+			localStorage.setItem("vouchers", vouchers);
+			print();
+		}
+		
+        function toggleNameInput() {
+            var nameOption = document.getElementById('nameOption').value;
+            var nameInput = document.getElementById('nameInput');
+            var randomNameInputs = document.getElementById('randomNameInputs');
+
+            if (nameOption === 'random') {
+                nameInput.style.display = 'none';
+                randomNameInputs.style.display = 'block';
+            } else {
+                nameInput.style.display = 'block';
+                randomNameInputs.style.display = 'none';
+            }
+			
+			
+            if (nameInput.disabled) {
+                nameInput.disabled = false;
+                randomNameInputs.disabled = true;
+            } else {
+                nameInput.disabled = true;
+                randomNameInputs.disabled = false;
+            }
+
+            var inputs1 = nameInput.querySelectorAll('input');
+            var inputs2 = randomNameInputs.querySelectorAll('input');
+
+            inputs1.forEach(function(input) {
+                input.disabled = nameInput.disabled;
+            });
+
+            inputs2.forEach(function(input) {
+                input.disabled = randomNameInputs.disabled;
+            });
+			
+			
+        }
+
+        document.getElementById('configForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            var nameOption = document.getElementById('nameOption').value;
+            var name;
+			document.getElementById('generatedConfig').textContent = "/ip hotspot user \n";
+			document.getElementById('usernames').textContent = "";
+            if (nameOption === 'random') {
+                generateRandomNames();
+            } else {
+                generateConfiguration(document.getElementById('name').value);
+            }
+        });
+
+        function generateRandomNames() {
+            var quantity = parseInt(document.getElementById('quantity').value);
+            var prefix = document.getElementById('prefix').value;
+            var nameLength = parseInt(document.getElementById('nameLength').value);
+            var option = document.getElementById('randomNameOption').value;
+            var configStrings = [];
+            var generatedNames = [];
+
+            for (var i = 0; i < quantity; i++) {
+                var result;
+                do {
+                    result = prefix;
+                    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                    var charactersLength = characters.length;
+					
+					if (option === 'randomChars') {
+						for (var j = 0; j < nameLength; j++) {
+							result += characters.charAt(Math.floor(Math.random() * charactersLength));
+						}
+					} else if (option === 'randomNumbers') {
+						for (var j = 0; j < nameLength; j++) {
+							result += Math.floor(Math.random() * 10);
+						}
+					} else if (option === 'allCaps') {
+						for (var j = 0; j < nameLength; j++) {
+							result += characters.toUpperCase().charAt(Math.floor(Math.random() * charactersLength));
+						}
+					} else if (option === 'allSmall') {
+						for (var j = 0; j < nameLength; j++) {
+							result += characters.toLowerCase().charAt(Math.floor(Math.random() * charactersLength));
+						}
+					} else if (option === 'mixed') {
+						for (var j = 0; j < nameLength; j++) {
+							var char = characters.charAt(Math.floor(Math.random() * charactersLength));
+							result += Math.random() < 0.5 ? char.toUpperCase() : char.toLowerCase();
+						}
+					}
+				}while (generatedNames.includes(result));
+ 
+                generatedNames.push(result);
+                generateConfiguration(result);
+            }
+			localStorage.setItem("vouchers", document.getElementById('usernames').textContent)
+        }
+
+        function generateConfiguration(name) {
+            // Get form values
+            var server = document.getElementById('server').value;
+            var profile = document.getElementById('profile').value;
+            var daysValidity = parseInt(document.getElementById('daysValidity').value);
+            var hoursValidity = parseInt(document.getElementById('hoursValidity').value);
+            var minutesValidity = parseInt(document.getElementById('minutesValidity').value);
+            var daysLimit = parseInt(document.getElementById('daysLimit').value);
+            var hoursLimit = parseInt(document.getElementById('hoursLimit').value);
+            var minutesLimit = parseInt(document.getElementById('minutesLimit').value);
+            var price = parseInt(document.getElementById('price').value);
+            //var extCode = document.getElementById('extCode').checked ? 1 : 0; // Convert checkbox value to 0 or 1
+            var extCode = 0;
+            var vendoName = document.getElementById('vendoName').value;
+            var limitBytesTotal = document.getElementById('limitBytesTotal').value;
+            
+            // Calculate total validity and limit uptime in minutes
+            var totalMinutesValidity = (daysValidity * 24 * 60) + (hoursValidity * 60) + minutesValidity;
+            var totalMinutesLimit = (daysLimit * 24 * 60) + (hoursLimit * 60) + minutesLimit;
+
+            // Convert validity and limit uptime to format "0m"
+            var validity = totalMinutesValidity + "m";
+            var limitUptime = totalMinutesLimit + "m";
+            
+            // Construct comment string
+            var comment = validity + ',' + price + ',' + extCode + ',' + vendoName;
+
+            // Construct configuration string
+            var config = 'add name="' + name + '" server="' + server + '" profile="' + profile + '" comment="' + comment + '" limit-uptime="' + limitUptime + '" limit-bytes-total="' + limitBytesTotal + '"\n';
+            
+            // Append to generated configurations
+            document.getElementById('generatedConfig').textContent += config;
+			document.getElementById('usernames').textContent += name + "\n";
+        }
+		
+        function downloadConfig() {
+            var configText = document.getElementById('generatedConfig').textContent;
+            var element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(configText));
+            element.setAttribute('download', 'generated_config.rsc');
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+		
+		const elements = document.getElementsByClassName('copyButton');
+
+		// Add a click event listener to each element using a regular function
+		for (let i = 0; i < elements.length; i++) {
+			elements[i].addEventListener('click', function() {
+				const preContent = document.getElementById(this.dataset.sid).innerText; 
+				const tempTextArea = document.createElement('textarea');
+				tempTextArea.value = preContent;
+				document.body.appendChild(tempTextArea);
+				tempTextArea.select();
+				document.execCommand('copy');
+				document.body.removeChild(tempTextArea);
+			});
+		}
+
+    </script>
+</body>
+</html>
