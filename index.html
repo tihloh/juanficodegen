@@ -187,7 +187,7 @@
 					template = template.replace("${PRICE}", (price==0?"FREE":"P"+price));
 					template = template.replace("${TIME}", time);
 					template = template.replace("${CODE}", code);
-					template = template.replace("${IMAGE}", "?ext=qrcode&data="+code);
+					template = template.replace("${IMAGE}", "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data="+code);
 					html = html+template;
 				}
 			}
